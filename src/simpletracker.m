@@ -157,21 +157,42 @@ function [ tracks adjacency_tracks A ] = simpletracker(points, varargin)
         source = points{i};
         target = points{i+1};
         
-        % Frame to frame linking
-        switch lower(method)
-        
-            case 'hungarian'
-                [target_indices , ~, unmatched_targets{i+1} ] = ...
-                    hungarianlinker(source, target, max_linking_distance);
-        
-            case 'nearestneighbor'
-                [target_indices , ~, unmatched_targets{i+1} ] = ...
-                    nearestneighborlinker(source, target, max_linking_distance);
-
+        % Deal properly with empty frames.
+        if isempty( target )
+            
+            target_indices = -1;
+            unmatched_targets{i+1} = double.empty(0);
+            if isempty( source )
+                unmatched_sources{i} = double.empty(0);
+            else
+                unmatched_sources{i} = 1 : size( source, 1 );
+            end
+            
+        elseif isempty( source )
+            
+            target_indices = -1;
+            unmatched_targets{i+1} = 1 : size( target, 1 );
+            unmatched_sources{i} = double.empty(0);
+            
+        else
+            
+            % Frame to frame linking
+            switch lower(method)
+                
+                case 'hungarian'
+                    [target_indices , ~, unmatched_targets{i+1} ] = ...
+                        hungarianlinker(source, target, max_linking_distance);
+                    
+                case 'nearestneighbor'
+                    [target_indices , ~, unmatched_targets{i+1} ] = ...
+                        nearestneighborlinker(source, target, max_linking_distance);
+                    
+            end
+            
+            unmatched_sources{i} = find( target_indices == -1 );
+            
         end
-        
-        
-        unmatched_sources{i} = find( target_indices == -1 );
+
         
         % Prepare holders for links in the sparse matrix
         n_links = sum( target_indices ~= -1 );

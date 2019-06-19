@@ -28,3 +28,8 @@ Example output: `track{1} = [ 1 2 1 NaN 4 ]` means that the first track is made 
 `[ tracks adjacency_tracks ] = SIMPLETRACKER(...)` return also a cell array with one cell per track, but the indices in each track are the global indices of the concatenated points array, that can be obtained by `all_points = vertcat( points{:} );`. It is very useful for plotting applications. 
 
 `[ tracks adjacency_tracks A ] = SIMPLETRACKER(...)` return the sparse adjacency matrix. This matrix is made everywhere of 0s, expect for links between a source particle (row) and a target particle (column) where there is a 1. Rows and columns indices are for points in the concatenated points array. Only forward links are reported (from a frame to a frame later), so this matrix has no non-zero elements in the bottom left diagonal half. Reconstructing a crude trajectory using this matrix can be as simple as calling `gplot( A, vertcat( points{:} ) )`
+
+## Demo.
+
+Check the `publish` version of the demo script in this repo:
+http://htmlpreview.github.io/?https://raw.githubusercontent.com/tinevez/simpletracker/master/publish/html/TestSimpleTracker.html
